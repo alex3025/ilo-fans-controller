@@ -11,8 +11,8 @@ $ILO_FANS_PROXY_HOST = 'http://localhost:8000';
 $fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $connection = ssh2_connect($host, 22);
-  ssh2_auth_password($connection, $username, $password);
+  $connection = ssh2_connect($ILO_HOST, 22);
+  ssh2_auth_password($connection, $ILO_USERNAME, $ILO_PASSWORD);
   for ($i = 0; $i < 6; $i++) {
     $fan = intval($_POST['fan-' . $i]);
 
