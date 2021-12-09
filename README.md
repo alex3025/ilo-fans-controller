@@ -97,4 +97,14 @@ _For this example, Ubuntu 21.04 with Apache 2 and PHP 7.4 is used._
     WantedBy=multi-user.target
     ```
 
+    Then enable and start it:
+
+    ```sh
+    $ sudo systemctl enable ilo-fans-proxy.service
+    ```
+
+    ```sh
+    $ sudo systemctl start ilo-fans-proxy.service
+    ```
+
     </details>
