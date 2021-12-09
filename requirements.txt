@@ -1,0 +1,4 @@
+aiohttp
+fastapi
+uvicorn[standard]
+gunicorn
