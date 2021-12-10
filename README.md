@@ -1,7 +1,7 @@
 # iLO Fans Controller
 
 <p align="center">
-  <img width="800" src="screenshot.png" alt="Webpage Screenshot" style="border-radius:5px;">
+  <img width="800" src="screenshot.png" alt="Webpage Screenshot">
   <br>
   <i>Easily manage your HP's server fans speeds, anywhere!</i>
 </p>

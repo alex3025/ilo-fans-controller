@@ -8,53 +8,41 @@ $ILO_PASSWORD = 'your-ilo-password';
 $ILO_FANS_PROXY_HOST = 'http://localhost:8000';
 
 
-$fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
+$raw_fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $connection = ssh2_connect($ILO_HOST, 22);
-  ssh2_auth_password($connection, $ILO_USERNAME, $ILO_PASSWORD);
-  for ($i = 0; $i < 6; $i++) {
-    $fan = intval($_POST['fan-' . $i]);
+  $fan_count = 0;
+  foreach ($_POST as $key => $value)
+    if (strpos($key, 'fan-') === 0)
+      $fan_count++;
 
-    if (($fan >= 10 && $fan <= 100) && $fan != json_decode($fan_speeds, true)[$i]) {
-      $effectiveSpeed = ceil($fan / 100 * 255);
+  if ($fan_count > 0) {
+    $connection = ssh2_connect($ILO_HOST, 22);
+    ssh2_auth_password($connection, $ILO_USERNAME, $ILO_PASSWORD);
 
-      $stream = ssh2_exec($connection, 'fan p ' . $i . ' min 255');
-      stream_set_blocking($stream, true);
-      stream_get_contents($stream);
+    foreach ($_POST as $key => $value)
+      if (strpos($key, 'fan-') === 0) {          
+        $fan = intval($_POST[$key]);
+        $index = str_replace('fan-', '', $key);
 
-      $stream = ssh2_exec($connection, 'fan p ' . $i . ' max ' . $effectiveSpeed);
-      stream_set_blocking($stream, true);
-      stream_get_contents($stream);
-    }
-  }
+        if (($fan >= 10 && $fan <= 100) && $fan != json_decode($raw_fan_speeds, true)[$index]) {
+          $stream = ssh2_exec($connection, 'fan p ' . $index . ' min 255');
+          stream_set_blocking($stream, true);
+          stream_get_contents($stream);
 
-  $speeds = [];
-  for ($i = 0; $i < 6; $i++) {
-    $speeds[$i] = intval($_POST['fan-' . $i]);
-  }
-
-  while (true) {
-    $raw_fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
-    $speeds_from_server = json_decode($raw_fan_speeds, true);
-
-    $equal = true;
-    for ($i = 0; $i < 6; $i++) {
-      if ($speeds[$i] != $speeds_from_server[$i]) {
-        $equal = false;
-        break;
+          $stream = ssh2_exec($connection, 'fan p ' . $index . ' max ' . ceil($fan / 100 * 255));
+          stream_set_blocking($stream, true);
+          stream_get_contents($stream);
+        }
       }
-    }
 
-    if ($equal) {
-      break;
-    }
+    $raw_fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
   }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -110,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <script lang="javascript">
-      const fan_speeds = <?php echo $fan_speeds; ?>;
+      const current_fan_speeds = <?php echo $raw_fan_speeds; ?>;
       const form = document.querySelector('form');
 
       function onFormSubmit() {
@@ -167,16 +155,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         number.removeAttribute('disabled');
 
-        slider.value = fan_speeds[fanIndex];
-        number.value = fan_speeds[fanIndex];
+        slider.value = current_fan_speeds[fanIndex];
+        number.value = current_fan_speeds[fanIndex];
 
         slider.addEventListener('input', () => number.value = slider.value);
         number.addEventListener('input', () => slider.value = number.value);
 
         fan.querySelector('button').addEventListener('click', () => {
           const id = number.id.split('-')[1];
-          slider.value = fan_speeds[id];
-          number.value = fan_speeds[id];
+          slider.value = current_fan_speeds[id];
+          number.value = current_fan_speeds[id];
         });
 
         fanIndex++;
