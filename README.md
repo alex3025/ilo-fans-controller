@@ -134,7 +134,7 @@ Otherwise you can download the zip using the top right green button.
 
 4. Test the FastAPI server:
     ```sh
-    $ gunicorn -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker ilo-fans-proxy:app
+    gunicorn -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker ilo-fans-proxy:app
     ```
     > `8000` can be changed to whatever port you want (as long as it's not used by any another service), but remember to change it also in the PHP script.
 
@@ -174,6 +174,9 @@ Otherwise you can download the zip using the top right green button.
 
 * You can set the fans speeds programmatically using an HTTP client like `cURL`:
     ```sh
-    curl -X POST -F 'fan-0=<fan 0 speed%>' -F 'fan-1=<fan 1 speed%>'... http://<server ip>/ilo-fans-controller.php
+    curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "fan-0=50&fan-3=25..." http://<server ip>/ilo-fans-controller.php
     ```
     ###### If you set up Basic Authentication, just add `-u <username>:<password>` to the command.
+    If the operation was successful, the response's status code is `200`.
+    <br>
+    Every other code means that there was an error.
