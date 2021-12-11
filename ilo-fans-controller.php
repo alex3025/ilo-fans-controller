@@ -20,12 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $connection = ssh2_connect($ILO_HOST, 22);
     ssh2_auth_password($connection, $ILO_USERNAME, $ILO_PASSWORD);
 
+    $current_fan_speeds = json_decode($raw_fan_speeds, true);
+    $new_speeds = $current_fan_speeds;
     foreach ($_POST as $key => $value)
       if (strpos($key, 'fan-') === 0) {          
         $fan = intval($_POST[$key]);
         $index = str_replace('fan-', '', $key);
 
-        if (($fan >= 10 && $fan <= 100) && $fan != json_decode($raw_fan_speeds, true)[$index]) {
+        if (($fan >= 10 && $fan <= 100) && $fan != $current_fan_speeds[$index]) {
           $stream = ssh2_exec($connection, 'fan p ' . $index . ' min 255');
           stream_set_blocking($stream, true);
           stream_get_contents($stream);
@@ -34,9 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           stream_set_blocking($stream, true);
           stream_get_contents($stream);
         }
+
+        $new_speeds[$index] = $fan;
       }
 
-    $raw_fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
+    while ($new_speeds != $current_fan_speeds) {
+      $raw_fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
+      $current_fan_speeds = json_decode($raw_fan_speeds, true);
+    }
   }
 }
 ?>
