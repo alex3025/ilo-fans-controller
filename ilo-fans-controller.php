@@ -7,6 +7,10 @@ $ILO_PASSWORD = 'your-ilo-password';
 // iLO Fans Proxy Address
 $ILO_FANS_PROXY_HOST = 'http://localhost:8000';
 
+// Number of fans present in your server
+// (most of the times you don't need to change this)
+$FANS = 6;
+
 
 $raw_fan_speeds = file_get_contents($ILO_FANS_PROXY_HOST);
 
@@ -66,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1 class="font-bold text-3xl">
         iLO Fans Controller
       </h1>
-      <a href="https://alex3025.tk" class="text-sm font-normal sm:self-end mb-0.5 italic">by alex3025</a>
+      <a href="https://github.com/alex3025" target="_blank" class="text-sm font-normal sm:self-end mb-0.5 italic">by alex3025</a>
     </div>
 
     <div class="flex flex-col sm:flex-row items-center">
@@ -141,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           form.reportValidity();
       });
 
-      for (let i = 1; i < 6; i++) {
+      for (let i = 1; i < <?php echo $FANS ?>; i++) {
         const template = document.querySelector('#fans > div:first-child');
         const clone = template.cloneNode(true);
         clone.querySelector('label').innerText = `Fan #${i}`;
