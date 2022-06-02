@@ -25,14 +25,15 @@
 ### Requirements:
 * An **HP server**, obviously.
 * **iLO hacked** with _[The Fan Hack](https://www.reddit.com/r/homelab/comments/hix44v/silence_of_the_fans_pt_2_hp_ilo_4_273_now_with/)_
-* A web server with PHP 7.4
-* Python 3.9 with `pip`
+* A web server that supports PHP
+* Python 3.8+ with `pip`
 
 #### The following guide was run on:
 * An **HP DL380e G8** server
 * **iLO 4** Advanced **v2.73** (11 February 2020)
-* A Proxmox LXC container running **Ubuntu 21.04**
-* Apache 2
+* A Proxmox container running **Ubuntu 21.10**
+* Apache 2 & **PHP 8.0**
+* Python 3.9 & pip 20.3.4
 
 ---
 
@@ -48,50 +49,19 @@ git clone https://github.com/alex3025/ilo-fans-controller.git && cd ilo-fans-con
 Otherwise you can download the zip using the top right green button.
 > If you downloaded the zip, remember to unzip it and `cd` inside the extracted directory.
 
-### Installing Apache 2, PHP 7.4, the `SSH2` extension and the script:
-1. Install `apache2`, `php` and `libapache2-mod-php`:
+### Installing Apache, PHP and the `ssh2` extension:
+1. Install `apache2`, `php`, `libapache2-mod-php`, `libssh2-1` and `php-ssh2`:
     ```sh
-    sudo apt-get install apache2 php libapache2-mod-php
+    sudo apt-get install apache2 php libapache2-mod-php libssh2-1 php-ssh2
     ```
 
-2. Check the PHP version:
-    ```sh
-    php -v | grep -Po 'PHP \d.\d'
-    ```
-
-    **Must output:** `PHP 7.4`
-
-3. Install PHP build tools:
-    ```sh
-    sudo apt-get install php-pear php7.4-dev
-    ```
-
-4. Install the `SSH2` extension:
-    ```sh
-    pecl install ssh2-alpha
-    ```
-
-5. Enable the extension in the `/etc/php/7.4/apache2/php.ini` file:
-    ```diff
-    ...
-    ;extension=pdo_pgsql
-    ;extension=pdo_sqlite
-    ;extension=pgsql
-    ;extension=shmop
-    + extension=ssh2.so
-
-    ; The MIBS data available in the PHP distribution must be installed.
-    ...
-    ```
-
-6. Restart Apache:
+2. Restart Apache:
     ```sh
     sudo systemctl restart apache2
     ```
 
-7. Configuring the PHP script:
-   
-    Open the `ilo-fans-controller.php` file with a text editor and change the variables:
+### Configuring the PHP script:
+1. Open the `ilo-fans-controller.php` file with a text editor and change the variables:
 
     ```php
     // iLO Credentials
@@ -101,29 +71,33 @@ Otherwise you can download the zip using the top right green button.
 
     // iLO Fans Proxy Address
     $ILO_FANS_PROXY_HOST = 'http://localhost:8000';
+
+    // Number of fans present in your server
+    // (most of the times you don't need to change this)
+    $FANS = 6;
     ```
 
-8. Copy the `ilo-fans-controller.php` file to `/var/www/html/`:
-    ###### If you want you can change the destination filename to something else.
+2. Copy the `ilo-fans-controller.php` file to `/var/www/html/`:
     ```sh
-    sudo cp ilo-fans-controller.php /var/www/html/
+    sudo cp ilo-fans-controller.php favicon.ico /var/www/html/
     ```
 
-### Installing the Python "Proxy":
-> On most linux distributions, Python 3.9 should™ be already installed.
-1. Install `pip`:
+### Installing `pip3` and configuring the Python script:
+> On most linux distributions, Python 3.8+ should™ be already installed.<br>
+> If not, there are plenty of tutorials/guides on how to install it.
+1. Install `pip3`:
     ```
     sudo apt-get install python3-pip
     ```
 
-2. Install all the dependencies:
+2. Install the required dependencies:
     ```sh
     pip3 install -r requirements.txt
     ```
 
 3. Configure the python script:
 
-    Open the `ilo-fans-proxy.py` file with a text editor and change the variables:
+    Open the `ilo-fans-proxy.py` file with a text editor and change the variables (like before):
 
     ```py
     # iLO Credentials
@@ -136,13 +110,13 @@ Otherwise you can download the zip using the top right green button.
     ```sh
     gunicorn -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker ilo-fans-proxy:app
     ```
-    > `8000` can be changed to whatever port you want (as long as it's not used by any another service), but remember to change it also in the PHP script.
+    > `8000` can be changed to whatever port you want (as long as it's not in use), but don't forget to change it also in the PHP script.
 
     If it's working, press `CTRL+C` to terminate the process and continue with the guide.
 
 5. Create a service to run the script automatically on startup:
 
-    Make a new file `/etc/systemd/system/ilo-fans-proxy.service` and paste the following text in it _(don't forge to change the placeholders)_:
+    Make a new file `/etc/systemd/system/ilo-fans-proxy.service` and paste the following text in it _(remember to change the `<placeholders>`)_:
     
     ```ini
     [Unit]
@@ -163,20 +137,17 @@ Otherwise you can download the zip using the top right green button.
 
     ```sh
     sudo systemctl enable ilo-fans-proxy.service
-    ```
-
-    ```sh
     sudo systemctl start ilo-fans-proxy.service
     ```
 
 ## Tips & Tricks
-* If you are going **to expose the web server to the public** (or you installed the script on an existing server), make sure to **add some sort of authentication** (like Basic Authentication) to avoid people making your server take off at 3 AM.
+* If you are going **to expose the web server to the public** (or you installed the script on an existing public Apache installation), make sure to **add some sort of authentication** (like Basic Authentication) to avoid people making your server take off at 3 AM.
 
-* You can set the fans speeds programmatically using an HTTP client like `cURL`:
+* You can set the fans speeds programmatically sending a POST request to the PHP script:
     ```sh
+    # Example (using curl)
     curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "fan-0=50&fan-3=25..." http://<server ip>/ilo-fans-controller.php
     ```
-    ###### If you set up Basic Authentication, just add `-u <username>:<password>` to the command.
     If the operation was successful, the response's status code is `200`.
     <br>
     Every other code means that there was an error.
