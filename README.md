@@ -24,7 +24,7 @@
 
 ### Requirements:
 * An **HP server**, obviously.
-* **iLO hacked** with _[The Fan Hack](https://www.reddit.com/r/homelab/comments/hix44v/silence_of_the_fans_pt_2_hp_ilo_4_273_now_with/)_
+* **iLO hacked** with _[The Fan Hack (v2.77)](https://www.reddit.com/r/homelab/comments/sx3ldo/hp_ilo4_v277_unlocked_access_to_fan_controls/)_
 * A web server that supports PHP
 * Python 3.8+ with `pip`
 
