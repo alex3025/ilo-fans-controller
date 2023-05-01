@@ -1,0 +1,8 @@
+# Custom VSCode settings
+.vscode
+
+# Testing Presets file
+presets.json
+
+# Tailwind Config file (nothing special, used for VSCode Tailwind CSS IntelliSense)
+tailwind.config.js
