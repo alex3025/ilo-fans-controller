@@ -15,7 +15,7 @@
 
 ### How does it work? 🛠
 
-This tool is a **single PHP script** that uses the `php-curl` extension to **get the current server fan speeds from the iLO REST api** and the `php-ssh2` extension to **set the fan speeds using the [patched iLO SSH interface](#can-i-use-this-tool-with-my-hp-server-).** You can also **create custom presets** to set a specific fan configuration with a single click, all with a **simple and clean web interface** made using [Alpine.js](https://alpinejs.dev/) and [TailwindCSS](https://tailwindcss.com/).
+This tool is a **single PHP script** that uses the `php-curl` extension to **get the current server fan speeds from the iLO REST api** and the `php-ssh2` extension to **set the fan speeds using the [patched iLO SSH interface](#can-i-use-this-tool-with-my-hp-server-🖥️).** You can also **create custom presets** to set a specific fan configuration with a single click, all with a **simple and clean web interface** made using [Alpine.js](https://alpinejs.dev/) and [TailwindCSS](https://tailwindcss.com/).
 
 ### Can I use this tool with my HP server? 🖥️
 
@@ -53,7 +53,7 @@ If you found this tool useful, consider offering me a coffee using [PayPal](http
 
 > ⚠ **IMPORTANT!** ⚠
 >
-> Again, this tool works thanks to a **[patched iLO firmware](#can-i-use-this-tool-with-my-hp-server-)** that expose to the iLO SSH interface some commands to manipulate the fans speeds.
+> Again, this tool works thanks to a **[patched iLO firmware](#can-i-use-this-tool-with-my-hp-server-🖥️)** that expose to the iLO SSH interface some commands to manipulate the fans speeds.
 >
 > **This patch is required to use this tool!**
 
