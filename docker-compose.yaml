@@ -1,0 +1,9 @@
+services:
+  ilo-fans-controller:
+    build: .
+    ports:
+      - "8084:80"
+    environment:
+      ILO_HOST: <ilo-ip-address>
+      ILO_USERNAME: Administrator
+      ILO_PASSWORD: <ilo-password>
