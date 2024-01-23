@@ -4,6 +4,6 @@ services:
     ports:
       - "8084:80"
     environment:
-      ILO_HOST: <ilo-ip-address>
+      ILO_HOST: 192.168.1.2
       ILO_USERNAME: Administrator
-      ILO_PASSWORD: <ilo-password>
+      ILO_PASSWORD: MyPa$$word
