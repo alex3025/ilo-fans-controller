@@ -1,6 +1,8 @@
 services:
   ilo-fans-controller:
-    build: .
+    build:
+      context: https://github.com/alex3025/ilo-fans-controller.git#main
+      dockerfile: Dockerfile
     ports:
       - "8084:80"
     environment:
