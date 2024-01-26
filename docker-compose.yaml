@@ -1,0 +1,12 @@
+services:
+  ilo-fans-controller:
+    build:
+      context: https://github.com/alex3025/ilo-fans-controller.git#main
+      dockerfile: Dockerfile
+    ports:
+      # You can use whatever (unused) port instead of 8000.
+      - "8000:80"
+    environment:
+      ILO_HOST: 'your-ilo-address'  # Ex. 192.168.1.69
+      ILO_USERNAME: 'your-ilo-username'  # Ex. Administrator
+      ILO_PASSWORD: 'your-ilo-password'  # Ex. AdministratorPassword1234
