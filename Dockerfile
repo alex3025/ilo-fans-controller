@@ -8,5 +8,4 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
 COPY favicon.ico /var/www/html/
 COPY ilo-fans-controller.php /var/www/html/index.php
 
-#COPY config.inc.php /var/www/html/
 COPY config.inc.php.env /var/www/html/config.inc.php
