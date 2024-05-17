@@ -41,7 +41,7 @@ jobs:
           elif [[ $GITHUB_REF == refs/tags/* ]]; then
             TAG=${GITHUB_REF#refs/tags/}
           else
-            TAG=${GITHUB_REF#refs/heads/}
+            TAG=latest
           fi
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
