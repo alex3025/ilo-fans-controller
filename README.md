@@ -59,7 +59,7 @@ docker run -d --name ilo-fans-controller --restart always \
     -e ILO_HOST='your-ilo-address' \
     -e ILO_USERNAME='your-ilo-username' \
     -e ILO_PASSWORD='your-ilo-password' \
-    ghcr.io/alex3025/ilo-fan-controller:latest
+    ghcr.io/alex3025/ilo-fans-controller:latest
 ```
 
 Or if you prefer, you can use `docker compose`, as the [docker-compose.yaml](https://github.com/alex3025/ilo-fans-controller/blob/main/docker-compose.yaml) file is provided as well.
