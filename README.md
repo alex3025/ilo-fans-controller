@@ -49,13 +49,30 @@ If you found this tool useful, consider offering me a coffee using [PayPal](http
 
 ---
 
-## How to install
+## Use with Docker / Docker Compose
+
+If you already have a Docker environment, you can be up and running in minutes using the following command (obviously you need to change the value):
+
+```sh
+docker run -d --name ilo-fans-controller --restart always \
+    -p 8000:80 \
+    -e ILO_HOST='your-ilo-address' \
+    -e ILO_USERNAME='your-ilo-username' \
+    -e ILO_PASSWORD='your-ilo-password' \
+    ghcr.io/alex3025/ilo-fan-controller:latest
+```
+
+Or if you prefer, you can use `docker compose`, as the [docker-compose.yaml](https://github.com/alex3025/ilo-fans-controller/blob/main/docker-compose.yaml) file is provided as well.
+
+---
 
 > ⚠ **IMPORTANT!** ⚠
 >
 > Again, this tool works thanks to a **[patched iLO firmware](#can-i-use-this-tool-with-my-hp-server-%EF%B8%8F)** that expose to the iLO SSH interface some commands to manipulate the fans speeds.
 >
 > **This patch is required to use this tool!**
+
+## Manual installation
 
 ### The following guide was run on
 
