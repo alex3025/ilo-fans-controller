@@ -279,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 					</h1>
 					<div class="flex items-center justify-between">
 						<p class="text-sm font-normal self-end pb-0.5 italic dark:text-gray-250 text-gray-450 select-none">
-							by <a href="https://ko-fi.com/alex3025" target="_blank" class="font-medium dark:hover:text-gray-150 hover:text-gray-575 select-text transition-colors duration-75">alex3025</a>
+							by <a href="https://github.com/sponsors/alex3025" target="_blank" class="font-medium dark:hover:text-gray-150 hover:text-gray-575 select-text transition-colors duration-75">alex3025</a>
 						</p>
 
 						<!-- Version -->
